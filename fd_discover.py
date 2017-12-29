@@ -90,17 +90,36 @@ def mycmp(fd1, fd2):
 
 def output_fd(fds):
     with open(output_filename, 'w') as f:
+        # 所有的函数依赖关系
+        # todo 需要添加没有x的情况
         fds_sorted = sorted(fds, cmp=mycmp)
+        temp_dict = {}
         for fd in fds_sorted:
-            str = ''
-            for l in sorted(list(fd[0])):
-                str += '%d ' % (l+1)
-            str += '-> %d\n' % (fd[1]+1)
-            f.write(str)
+            temp_dict.setdefault(fd[0],[]).append(fd[1])
+        for keys,values in temp_dict.items():
+            string = '['
+            for index,key in enumerate(sorted(keys)):
+                string += 'column{}'.format(key+1)
+                if index < len(keys) - 1:
+                    string += ','
+            string += ']:'
+            for index,value in enumerate(sorted(values)):
+                string += 'column{}'.format(value+1)
+                if index < len(values) - 1:
+                    string += ','
+            string += '\n'
+            f.write(string)
+        # for fd in fds_sorted:
+        #     str = '['
+        #     for l in sorted(list(fd[0])):
+        #         str += 'column%d,' % (l+1)
+        #     str += ']:'
+        #     str += '-> column%d\n' % (fd[1]+1)
+            # f.write(str)
 
 # get data
-input_filename = 'data.txt'
-output_filename = 'outputp.txt'
+input_filename = 'bots_200_15.csv'
+output_filename = 'our_result.txt'
 with open(input_filename, 'rb') as f:
     reader = csv.reader(f)
     table = map(tuple, reader)
